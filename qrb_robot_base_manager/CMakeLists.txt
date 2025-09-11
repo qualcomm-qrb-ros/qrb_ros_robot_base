@@ -17,9 +17,14 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include_directories(include)
-
 find_package(ament_cmake REQUIRED)
+find_package(libqrc REQUIRED)
+
+include_directories(
+    include
+    ${LIBQRC_INCLUDE_DIR}
+)
+link_directories(${LIBQRC_LIBRARY_DIR})
 
 add_library(${PROJECT_NAME} SHARED
   src/robot_base_manager.cpp
@@ -36,6 +41,8 @@ add_library(${PROJECT_NAME} SHARED
   src/error.cpp
 )
 
+target_include_directories(${PROJECT_NAME} PUBLIC ${LIBQRC_INCLUDE_DIR})
+target_link_directories(${PROJECT_NAME} PUBLIC ${LIBQRC_LIBRARY_DIR})
 target_link_libraries(${PROJECT_NAME} libqrc)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -60,7 +67,5 @@ install(
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
-
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
-
 ament_package()
