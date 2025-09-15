@@ -1,205 +1,250 @@
-# QRB ROS Robot Base Control
+<div align="center">
+  <h1>qrb_ros_robot_base</h1>
+  <p align="center">
+   <img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3gen2-dev-kits-hero-7" alt="Qualcomm QRB ROS" title="Qualcomm QRB ROS" />
+  </p>
+  <p>ROS2 package for controlling AMR robot base</p>
+  <a href="https://ubuntu.com/download/qualcomm-iot" target="_blank"><img src="https://img.shields.io/badge/Qualcomm%20Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" alt="Qualcomm Ubuntu"></a>
+  <a href="https://docs.ros.org/en/jazzy/" target="_blank"><img src="https://img.shields.io/badge/ROS%20Jazzy-1c428a?style=for-the-badge&logo=ros&logoColor=white" alt="Jazzy"></a>
+</div>
 
-## Overview
+---
 
-QRB ROS Robot Base control package provide ROS interfaces  to control AMR robot base.
+## 👋 Overview
 
-It will init robot base, sync time with MCB, provide ROS interfaces for control robot base, publish robot base state with ROS topics and provide test tools for robot base control. All the data between MCB and RBx side through [QRC protocol](https://github.com/qualcomm-qrb-ros/robot_base_qrc).
+**qrb_ros_robot_base** is a ROS2 package for controlling Qualcomm-specific AMR robot base it provide ROS interfaces to control AMR robot base.
 
-## Packages
+It will init robot base, sync time with MCB, provide ROS interfaces for control robot base, publish robot base state with ROS topics and provide test tools for robot base control. All the data between MCB and RBx side through [QRC protocol](https://github.com/qualcomm-qrb-ros/libqrc).
 
-| Name                            | Descriptions                                                                      |
-| ------------------------------- | --------------------------------------------------------------------------------- |
-| qrb_robot_base_manager          | The C/C++ library to control robot base. it communicates with MCB using `libqrc`. |
-| qrb_ros_robot_base              | ROS 2 API to control robot base, it calls `qrb_robot_base_manager`.                   |
-| qrb_ros_robot_base_msgs         | ROS 2 interfaces definition.                                                      |
-| qrb_ros_robot_base_keyboard     | Keyboard command line tools to control Robot base with ROS 2 messages.             |
-| qrb_ros_robot_base_urdf         | Robot base URDF model description and Rviz launch scripts.                         |
 
-## Code Sync and Build
+<div align="center">
+  <img src="./docs/assets/architecture.png" alt="architecture">
+</div>
 
-Currently, we only support build with QCLINUX SDK.
+<br>
 
-Download QCLINUX SDK follow this document: [download-the-prebuilt-robotics-image](https://docs.qualcomm.com/bundle/publicresource/topics/80-65220-2/download-the-prebuilt-robotics-image_3_1.html?product=1601111740013072&facet=Qualcomm%20Intelligent%20Robotics%20(QIRP)%20Product%20SDK&state=releasecandidate)
+**qrb_ros_robot_base** is a ROS2 package based on `qrb_robot_base_manager`
+**qrb_robot_base_manager** is C/C++ library to control robot base. it communicates with MCB using `libqrc`
+**qrb_ros_robot_base_keyboard** is a ROS2 package of keyboard command line tools to control Robot base with ROS 2 messages.
+**qrb_ros_robot_base_urdf** is robot base URDF model description and Rviz launch scripts.        
 
-Set up the cross-compile environment:
+---
+
+## 🔎 Table of Contents
+  * [APIs](#-apis)
+    * [`qrb_ros_robot_base` APIs](#-qrb_ros_robot_base-apis)
+    * [`qrb_robot_base_manager` APIs](#-qrb_robot_base_manager-apis)
+  * [Supported Targets](#-supported-targets)
+  * [Installation](#-installation)
+  * [Usage](#-usage)
+  * [Contributing](#-contributing)
+  * [License](#-license)
+
+---
+
+## ⚓ APIs
+
+### 🔹 `qrb_ros_robot_base` APIs
+
+#### ROS node parameters
+
+<table>
+  <tr>
+    <th>Parameter</th>
+    <th>Type</th>
+    <th>Default Value</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>ultra_enable</td>
+    <td>bool</td>
+    <td>true</td>
+    <td>enable or disable ultrasound sensor on AMR</td>
+  </tr>
+  <tr>
+    <td>rc_enable</td>
+    <td>bool</td>
+    <td>true</td>
+    <td>enable or disable remote controller(JoyStick) on AMR</td>
+  </tr>
+  <tr>
+    <td>motion_tf_enable</td>
+    <td>bool</td>
+    <td>false</td>
+    <td>enable or disable publish tf of AMR</td>
+  </tr>
+    <tr>
+    <td>max_speed</td>
+    <td>float</td>
+    <td>1.0</td>
+    <td>max line speed of AMR</td>
+  </tr>
+    <tr>
+    <td>max_angle_speed</td>
+    <td>float</td>
+    <td>1.5</td>
+    <td>max angle speed of AMR</td>
+  </tr>
+</table>
+
+#### ROS topics
+
+<table>
+  <tr>
+    <th>Topic Name</th>
+    <th>Message Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>/cmd_vel</td>
+    <td>geometry_msgs::msg::Twist</td>
+    <td>Subscribe topic for velocity control</td>
+  </tr>
+  <tr>
+    <td>/odom</td>
+    <td>nav_msgs::msg::Odometry</td>
+    <td>Publish topic for odom</td>
+  </tr>
+  <tr>
+    <td>/tf</td>
+    <td>tf2_ros::TransformBroadcaster</td>
+    <td>Publish topic for transform</td>
+  </tr>
+  <tr>
+    <td>/mcb_imu</td>
+    <td>sensor_msgs::msg::Imu</td>
+    <td>Publish topic for mcb imu</td>
+  </tr>
+    <tr>
+    <td>/battery</td>
+    <td>sensor_msgs::msg::BatteryState</td>
+    <td>Publish topic for battery state</td>
+  </tr>
+  <tr>
+    <td>/charge_cmd</td>
+    <td><a href="https://github.com/qualcomm-qrb-ros/qrb_ros_interfaces/blob/main/qrb_ros_robot_base_msgs/msg/ChargerCmd.msg" target="_blank">qrb_ros_robot_base_msgs::msg::ChargerCmd</a></td>
+    <td>Subscribe topic for start or stop charging, empty msgs</td>
+  </tr>
+  <tr>
+    <td>/robot_base_error</td>
+    <td><a href="https://github.com/qualcomm-qrb-ros/qrb_ros_interfaces/blob/main/qrb_ros_robot_base_msgs/msg/Error.msg" target="_blank">qrb_ros_robot_base_msgs::msg::Error</a></td>
+    <td>Publish topic for watchdog, motion or charger error</td>
+  </tr>
+</table>
+
+#### ROS service
+
+<table>
+  <tr>
+    <th>Service Name</th>
+    <th>Message Type</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>set_control_mode</td>
+    <td><a href="https://github.com/qualcomm-qrb-ros/qrb_ros_interfaces/blob/main/qrb_ros_robot_base_msgs/srv/SetControlMode.srv" target="_blank">qrb_ros_robot_base_msgs::srv::SetControlMode</a></td>
+    <td>Switch control mode switch between application, remote controller, auto charging modes</td>
+  </tr>
+  <tr>
+    <td>get_control_mode</td>
+    <td><a href="https://github.com/qualcomm-qrb-ros/qrb_ros_interfaces/blob/main/qrb_ros_robot_base_msgs/srv/GetControlMode.srv" target="_blank">qrb_ros_robot_base_msgs::srv::GetControlMode</a></td>
+    <td>Get current control mode</td>
+  </tr>
+  <tr>
+    <td>get_battery_state</td>
+    <td><a href="https://github.com/qualcomm-qrb-ros/qrb_ros_interfaces/blob/main/qrb_ros_robot_base_msgs/srv/GetBatteryState.srv" target="_blank">qrb_ros_robot_base_msgs::srv::GetBatteryState</a></td>
+    <td>Get current battery state</td>
+  </tr>
+</table>
+
+### 🔹 `qrb_robot_base_manager` APIs
+
+|   API                                       | Params                                         | Desctiption                     |
+| :-----------------------------------------: | :--------------------------------------------: | :-----------------------------: |
+| bool set_client(const Client & mode)        | mode: control mode                             | Switch control mode switch between application, remote controller, auto charging |
+| const Client & get_client()                 | N/A                                            | Return the current working mode |
+| void set_speed(float linear, float angular) | Linear: linear speed<br>Angular: angular speed | Set speed for velocity control  |
+| bool get_voltage()                          | N/A                                            | get voltage of AMR              |
+| bool get_current()                          | N/A                                            | get current of AMR              |
+| bool get_charger_state()                    | N/A                                            | get charger state               |
+| bool get_power_state()                      | N/A                                            | get power state of AMR          |
+
+
+---
+
+## 🎯 Supported Targets
+
+<table >
+  <tr>
+    <th>Development Hardware</th>
+    <th>Hardware Overview</th>
+  </tr>
+  <tr>
+    <td>Qualcomm Dragonwing™ RB3 Gen2</td>
+    <th><a href="https://www.qualcomm.com/developer/hardware/rb3-gen-2-development-kit"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/rb3-gen2-carousel?fmt=webp-alpha&qlt=85" width="180"/></a></th>
+  </tr>
+  <tr>
+    <td>Qualcomm Dragonwing™ IQ-9075 EVK</td>
+    <th><a href="https://www.qualcomm.com/products/internet-of-things/industrial-processors/iq9-series/iq-9075"><img src="https://s7d1.scene7.com/is/image/dmqualcommprod/dragonwing-IQ-9075-EVK?$QC_Responsive$&fmt=png-alpha" width="160"></a></th>
+  </tr>
+</table>
+
+---
+
+## ✨ Build from source code
+
+> [!IMPORTANT]
+> **PREREQUISITES**: The following steps need to be run on **ROS Jazzy**.<br>
+> Reference [Install ROS Jazzy](https://docs.ros.org/en/jazzy/index.html) to setup environment. <br>
+> For Qualcomm Linux, please check out the [Qualcomm Intelligent Robotics Product SDK](https://docs.qualcomm.com/bundle/publicresource/topics/80-70018-265/introduction_1.html?vproduct=1601111740013072&version=1.4&facet=Qualcomm%20Intelligent%20Robotics%20Product%20(QIRP)%20SDK) documents.
+
+Install dependencies:
 
 ```bash
-cd <qirp_decompressed_workspace>/qirp-sdk
-source setup.sh
+sudo apt update
+sudo apt install -y ros-jazzy-nav2-msgs
 ```
 
-Create `ros_ws` directory in `<qirp_decompressed_workspace>/qirp-sdk/`
+Download the source code and build with colcon:
 
 ```bash
-mkdir -p <qirp_decompressed_workspace>/qirp-sdk/ros_ws
+source /opt/ros/jazzy/setup.bash && \
+mkdir -p ~/ros_ws/src && cd ~/ros_ws/src && \
+git clone https://github.com/qualcomm-qrb-ros/libqrc.git && \
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_interfaces.git && \
+git clone https://github.com/qualcomm-qrb-ros/qrb_ros_robot_base.git && \
+colcon build
 ```
 
-Clone this repository and dependencies under `<qirp_decompressed_workspace>/qirp-sdk/ros_ws`
+---
+## 🚀 Usage
 
-```bash
-cd <qirp_decompressed_workspace>/qirp-sdk/ros_ws
-git clone https://github.com/qualcomm-qrb-ros/libqrc.git
-git clone https://github.com/qualcomm-qrb-ros/qrb_ros_robot_base.git
-git clone https://github.com/qualcomm-qrb-ros/qrb_ros_interfaces.git
-```
+> [!IMPORTANT]
+> **PREREQUISITES**:The Motor Control Board needs to be plugged into the Qualcomm device.
 
-Build projects
+1.Install the qrb_ros_robot_base by steps above.<br>
+2.Set environment variable ROBOT_BASE_MODEL to select the robot base model
+  ```bash
+  export ROBOT_BASE_MODEL=robot_base_mini
+  # or export ROBOT_BASE_MODEL=robot_base
+  ```
+---
+3.Run robot base
+  ```base
+  ros2 launch qrb_ros_robot_base robot_base.launch.py
+  ```
+4. Open a new terminal to run keyboard test tool
+  ```bash
+  ros2 run qrb_ros_robot_base_keyboard robot_base
+  ```
+## 🤝 Contributing
 
-```bash
-export AMENT_PREFIX_PATH="${OECORE_TARGET_SYSROOT}/usr;${OECORE_NATIVE_SYSROOT}/usr"
-export PYTHONPATH=${PYTHONPATH}:${OECORE_TARGET_SYSROOT}/usr/lib/python3.10/site-packages
+Thanks for your interest in contributing to qrb_ros_robot_base! Please read our [Contributions Page](CONTRIBUTING.md) for more information on contributing features or bug fixes. We look forward to your participation!
 
-colcon build --merge-install --cmake-args \
-   -DPython3_ROOT_DIR=${OECORE_TARGET_SYSROOT}/usr \
-   -DPython3_NumPy_INCLUDE_DIR=${OECORE_TARGET_SYSROOT}/usr/lib/python3.10/site-packages/numpy/core/include \
-   -DCMAKE_STAGING_PREFIX=$(pwd)/install \
-   -DCMAKE_PREFIX_PATH=$(pwd)/install/share -DBUILD_TESTING=OFF \
-   -DPYTHON_SOABI=cpython-310-aarch64-linux-gnu -DQRC_RB3=ON
-```
+---
 
-## Install and Run
+## 📜 License
 
-Push to the device and install
+qrb_ros_robot_base is licensed under the BSD-3-clause "New" or "Revised" License. 
 
-```
-cd <qirp_decompressed_workspace>/qirp-sdk/ros_ws/install
-tar czvf qrb_ros_robot_base.tar.gz include lib share
-scp qrb_ros_robot_base.tar.gz root@[ip-addr]:/opt/
-ssh root@[ip-addr]
-(ssh) tar -zxf /opt/qrb_ros_robot_base.tar.gz -C /opt/qcom/qirp-sdk/usr/
-```
-
-Run robot base manager
-
-```bash
-ssh root@[ip-addr]
-source /opt/qcom/qirp-sdk/qirp-setup.sh
-ros2 launch qrb_ros_robot_base robot_base.launch.py
-```
-
-Run keyboard test tool in another termibal
-
-```bash
-ssh root@[ip-addr]
-source /opt/qcom/qirp-sdk/qirp-setup.sh
-ros2 run qrb_ros_robot_base_keyboard robot_base
-```
-Use keyboard to control
-```
----------------------------------------------------------------
-Moving around:      Control mode:        Charger command:
-   u    i    o       1   2   3   4       8   9   0
-   j    k    l      Motion mode:         Emergency command:
-   m    ,    .       5   6   7           [   ]
----------------------------------------------------------------
-
-k : stop
-
-q/z : increase/decrease max speeds by 10%
-w/x : increase/decrease only linear speed by 10%
-e/c : increase/decrease only angular speed by 10%
-
-1 : application control
-2 : charger control
-3 : remote controller
-4 : query current mode
-
-5 : speed mode (for test only)
-6 : motion emergency enable (for test only)
-7 : motion emergency disable (for test only)
-
-8 : start charging
-9 : stop charging
-0 : get battery state
-
-[ : emergency enable
-] : emergency disable
-
-CTRL-C to quit
-```
-
-## Parameters
-
-### Parameters Definition
-
-| Name                          | Value Description | Default Value       |
-| ----------------------------- | ----------------- | ------------------- |
-| car_wheel_perimeter           | float (m)         | 0.4115              |
-| car_wheel_space               | float (m)         | 0.3302              |
-| imu_enable                    | bool              | false               |
-| motion_max_speed              | float (m/s)       | 1.0                 |
-| motion_max_angle_speed        | float (rad/s)     | 1.5                 |
-| motion_pid_speed              | float[3]          | [400.0, 200.0, 0.0] |
-| motion_odom_frequency         | 1-50              | 50                  |
-| motion_tf_enable              | bool              | false               |
-| rc_enable                     | bool              | true                |
-| rc_max_speed                  | float (m/s)       | 0.8                 |
-| rc_max_angle_speed            | float (rad/s)     | 2.0                 |
-| scale_speed                   | float             | 1.0                 |
-| scale_speed_odom              | float             | 1.0                 |
-| ultra_enable                  | bool              | true                |
-| ultra_quantity                | uint              | 7                   |
-| oba_bottom_distance           | float (m)         | 0.05                |
-| oba_front_distance            | float (m)         | 0.15                |
-| oba_side_distance             | float (m)         | 0.15                |
-| test_transport_latency_enable | bool              | false               |
-| time_sync_interval_sec        | unsigned int (s)  | 300                 |
-| time_sync_threshold_ms        | unsigned int (ms) | 10                  |
-
-**❗ Attention**
-
-- rc_max_speed need <= motion_max_speed
-- rc_max_angle_speed need <= motion_max_angle_speed
-
-### Robot Models
-
-Change robot model with environment variable:
-
-```bash
-export ROBOT_BASE_MODEL=robot_base_mini
-```
-
-Current support robot models:
-
-- Standard Robot base: `robot_base` (default)
-- Circle Robot base: `robot_base_mini`
-
-### Parameters Configuration
-
-Change /opt/qcom/qirp-sdk/usr/share/qrb_ros_robot_base/config/robot_base.yaml
-
-- Standard Robot base: `robot_base.yaml` (default)
-- Circle Robot base: `robot_base_mini.yaml`
-
-```bash
-/qrb_robot_base_manager:
-  ros__parameters:
-    ultra_enable: true
-    rc_enable: true
-    motion_tf_enable: false
-    # other parameters
-```
-Relaunch ROS node
-
-```bash
-ros2 launch qrb_ros_robot_base robot_base.launch.py
-```
-
-## Supported Platforms
-
-This package is designed and tested to be compatible with ROS 2 Humble running on Qualcom RB3 gen2.
-
-| Hardware          | Software          |
-| ----------------- | ----------------- |
-| Qualcomm RB3 gen2 | LE.QCROBOTICS.1.0 |
-
-## Contributions
-
-Thanks for your interest in contributing to qrb_ros_robot_base ! Please read our [Contributions Page](https://github.com/qualcomm-qrb-ros/qrb_ros_robot_base/blob/main/CONTRIBUTING.md) for more information on contributing features or bug fixes. We look forward to your participation!
-
-## License
-
-qrb_ros_robot_base is licensed under the BSD-3-clause "New" or "Revised" License.
-
-Check out the [LICENSE](https://github.com/qualcomm-qrb-ros/qrb_ros_robot_base/blob/main/LICENSE) for more details.
+Check out the [LICENSE](LICENSE) for more details.
