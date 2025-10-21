@@ -202,7 +202,7 @@ Install dependencies:
 
 ```bash
 sudo apt update
-sudo apt install -y ros-jazzy-nav2-msgs
+sudo apt install -y libgpiod-dev ros-jazzy-nav2-msgs ros-jazzy-xacro
 ```
 
 Download the source code and build with colcon:
