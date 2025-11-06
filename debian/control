@@ -2,8 +2,8 @@ Source: ros-jazzy-qrb-robot-base-manager
 Section: misc
 Priority: optional
 Maintainer: Chengheng Tan <chenghen@qti.qualcomm.com>
-Build-Depends: debhelper (>= 9.0.0), qcom-libqrc-dev, ros-jazzy-ament-cmake, ros-jazzy-ament-lint-auto <!nocheck>, ros-jazzy-ament-lint-common <!nocheck>
-Homepage: 
+Build-Depends: debhelper-compat (=13), qcom-libqrc-dev, ros-jazzy-ament-cmake, ros-jazzy-ament-lint-auto <!nocheck>, ros-jazzy-ament-lint-common <!nocheck>
+Homepage: https://github.com/qualcomm-qrb-ros/qrb_ros_robot_base
 Standards-Version: 3.9.2
 
 Package: ros-jazzy-qrb-robot-base-manager
