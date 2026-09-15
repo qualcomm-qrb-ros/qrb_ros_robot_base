@@ -12,5 +12,7 @@ jobs:
   ros-build:
     uses: qualcomm-qrb-ros/qrb_ros_gh_actions/.github/workflows/ubuntu-build.yml@main
     with:
-      # QRB ROS dependency
-      dependencies: "qualcomm-qrb-ros/qrb_ros_interfaces qualcomm-qrb-ros/libqrc"
+      ros-distro: lyrical
+    # with:
+    #   # QRB ROS dependency
+    #   dependencies: "qualcomm-qrb-ros/qrb_ros_transport qualcomm-qrb-ros/lib_mem_dmabuf"
